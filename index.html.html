@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>❤️</title>
+  <style>
+    :root{ --txt:#fff; --muted:rgba(255,255,255,.75); }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh;
+      display:flex; align-items:center; justify-content:center;
+      background:#000; color:var(--txt);
+      font-family: system-ui, -apple-system, Arial;
+      text-align:center; overflow:hidden;
+      padding: clamp(18px, 4vw, 38px);
+    }
+    .glow{
+      position:fixed; inset:-40%;
+      background:
+        radial-gradient(600px 600px at 20% 25%, rgba(236,72,153,.18), transparent 60%),
+        radial-gradient(700px 700px at 80% 35%, rgba(139,92,246,.18), transparent 60%),
+        radial-gradient(500px 500px at 50% 85%, rgba(34,211,238,.10), transparent 60%);
+      filter: blur(18px);
+      pointer-events:none;
+    }
+    .card{
+      width:min(560px, 96vw);
+      padding: clamp(20px, 4.5vw, 34px);
+      border-radius: 26px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 25px 90px rgba(0,0,0,.55);
+      position:relative;
+      transform: translateZ(0);
+    }
+    .text{
+      font-weight: 780;
+      letter-spacing:.2px;
+      font-size: clamp(26px, 6.2vw, 38px);
+      line-height: 1.35;
+      animation: fade 900ms ease-out both;
+    }
+    .sub{
+      margin-top: 14px;
+      font-size: clamp(14px, 3.8vw, 16px);
+      color: var(--muted);
+      animation: fade 1100ms ease-out both;
+      animation-delay: .15s;
+    }
+    .heart{
+      font-size: clamp(34px, 9vw, 46px);
+      margin-top: 18px;
+      animation: pulse 1.5s infinite;
+      user-select:none;
+    }
+    .btn{
+      margin-top: 18px;
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(135deg, rgba(236,72,153,.90), rgba(139,92,246,.90));
+      color: #fff;
+      font-weight: 850;
+      font-size: 16px;
+      cursor:pointer;
+      -webkit-tap-highlight-color: transparent;
+      user-select:none;
+      transition: transform .08s ease, filter .2s ease;
+    }
+    .btn:active{ transform: translateY(1px) scale(.99); filter: brightness(1.03); }
+    .hidden{ display:none; }
+
+    /* iPhone “haptic hissi” gibi küçük sarsıntı */
+    .shake{
+      animation: shake 220ms ease-in-out 1;
+    }
+    @keyframes shake{
+      0%{ transform: translateX(0); }
+      25%{ transform: translateX(-3px); }
+      50%{ transform: translateX(3px); }
+      75%{ transform: translateX(-2px); }
+      100%{ transform: translateX(0); }
+    }
+
+    @keyframes fade{
+      from{ opacity:0; transform: translateY(16px); }
+      to{ opacity:1; transform: translateY(0); }
+    }
+    @keyframes pulse{
+      0%,100%{ transform: scale(1); }
+      50%{ transform: scale(1.22); }
+    }
+
+    .float{
+      position: fixed;
+      left: var(--x);
+      bottom: -40px;
+      font-size: var(--s);
+      opacity: .92;
+      animation: rise var(--d) linear forwards;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
+      pointer-events:none;
+    }
+    @keyframes rise{
+      to{ transform: translateY(-110vh) translateX(var(--dx)); opacity: 0; }
+    }
+
+    .tip{
+      margin-top:10px;
+      font-size:12px;
+      color: rgba(255,255,255,.55);
+    }
+  </style>
+</head>
+<body>
+  <div class="glow" aria-hidden="true"></div>
+
+  <main class="card" id="card">
+    <div class="text">
+      Yavrum,<br>
+      seni sevmek<br>
+      hayatımın en doğru kararı.
+    </div>
+
+    <div class="heart">❤️</div>
+
+    <div class="sub" id="line2">
+      Ve her gün… sana daha çok “iyi ki” diyorum.
+    </div>
+
+    <button class="btn" id="btn" type="button">Sürprizi aç ✨</button>
+
+    <div class="sub hidden" id="surprise" style="margin-top:14px">
+      İyi ki varsın. <b>Hep.</b>
+    </div>
+
+    <div class="tip">Not: iPhone’da bazen “Dosyalar” içinde değil, Safari’de açınca daha stabil çalışır.</div>
+  </main>
+
+  <script>
+    const btn = document.getElementById("btn");
+    const surprise = document.getElementById("surprise");
+    const card = document.getElementById("card");
+
+    function spawnHearts(count=26){
+      for(let i=0;i<count;i++){
+        const el = document.createElement("div");
+        el.className = "float";
+        el.textContent = Math.random() > 0.2 ? "❤️" : "✨";
+        el.style.setProperty("--x", (Math.random()*100) + "vw");
+        el.style.setProperty("--dx", ((Math.random()*2-1)*140) + "px");
+        el.style.setProperty("--d", (5 + Math.random()*4) + "s");
+        el.style.setProperty("--s", (18 + Math.random()*24) + "px");
+        document.body.appendChild(el);
+        setTimeout(()=> el.remove(), 10000);
+      }
+    }
+
+    function doSurprise(){
+      // görsel “haptic” hissi
+      card.classList.remove("shake");
+      void card.offsetWidth; // reflow
+      card.classList.add("shake");
+
+      surprise.classList.remove("hidden");
+      btn.textContent = "❤️";
+      spawnHearts(30);
+    }
+
+    // iPhone için hem touch hem click
+    btn.addEventListener("touchstart", (e) => { e.preventDefault(); doSurprise(); }, {passive:false});
+    btn.addEventListener("click", doSurprise);
+  </script>
+</body>
+</html>
